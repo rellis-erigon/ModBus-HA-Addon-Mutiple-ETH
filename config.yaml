@@ -1,0 +1,37 @@
+name: "Modbus Multi-ETH Gateway"
+version: "0.1.0"
+slug: modbus-multi-eth
+description: "Modbus TCP/RTU gateway with multi-Ethernet interface support and auto-discovery"
+url: "https://github.com/rellis-erigon/ModBus-HA-Addon-Mutiple-ETH"
+arch:
+  - amd64
+  - aarch64
+  - armv7
+host_network: true
+hassio_api: true
+homeassistant_api: false
+auth_api: true
+ingress: true
+ingress_port: 0
+ingress_stream: true
+panel_icon: "mdi:ethernet"
+panel_title: "Modbus Multi-ETH"
+ports:
+  3000/tcp: null
+ports_description:
+  3000/tcp: "Web UI (via Ingress)"
+map:
+  - config:rw
+  - ssl:ro
+  - share:rw
+services:
+  - mqtt:want
+uart: true
+udev: true
+options:
+  log_level: info
+schema:
+  log_level: "list(trace|debug|info|warning|error|fatal)"
+environment:
+  S6_KEEP_ENV: "1"
+image: "ghcr.io/rellis-erigon/modbus-multi-eth-{arch}"
