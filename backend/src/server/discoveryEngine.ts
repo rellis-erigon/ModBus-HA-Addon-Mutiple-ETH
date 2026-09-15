@@ -185,6 +185,11 @@ export class DiscoveryEngine {
               respondedAt: new Date().toISOString(),
               added: false,
             }
+            // Attempt device identification
+            const ident = await this.readDeviceIdentification(gw.host, gw.port, unitId, iface.ipv4Address)
+            if (ident) {
+              device.deviceIdentification = ident
+            }
             devices.push(device)
             DiscoveryEngine.status.devicesFound = devices.length
             debug('Found device at %s:%d unit %d via %s', gw.host, gw.port, unitId, iface.name)
@@ -199,5 +204,57 @@ export class DiscoveryEngine {
       }
     }
     return devices
+  }
+
+  private async readDeviceIdentification(
+    host: string,
+    port: number,
+    unitId: number,
+    localAddress?: string
+  ): Promise<{ vendorName?: string; productCode?: string; revision?: string } | undefined> {
+    try {
+      const ModbusRTU = (await import('modbus-serial')).default
+      const client = new ModbusRTU()
+      const connectOpts: { port: number; localAddress?: string } = { port }
+      if (localAddress) connectOpts.localAddress = localAddress
+
+      await Promise.race([
+        client.connectTCP(host, connectOpts),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('connect timeout')), 1000)),
+      ])
+      client.setID(unitId)
+      client.setTimeout(500)
+
+      try {
+        const result = await (client as any).reportServerID()
+        if (result && result.data) {
+          const data = result.data
+          client.close(() => {})
+          return {
+            vendorName: typeof data === 'string' ? data : undefined,
+          }
+        }
+      } catch {
+        // reportServerID not supported, try raw register-based identification
+      }
+
+      // Fallback: Read holding registers 0-3 which some devices use for model identification
+      try {
+        const regs = await client.readHoldingRegisters(0, 4)
+        client.close(() => {})
+        if (regs && regs.data) {
+          return {
+            productCode: regs.data.map((r: number) => r.toString(16).padStart(4, '0')).join(''),
+          }
+        }
+      } catch {
+        // ignore
+      }
+
+      client.close(() => {})
+      return undefined
+    } catch {
+      return undefined
+    }
   }
 }

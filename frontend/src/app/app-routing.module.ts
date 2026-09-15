@@ -5,6 +5,8 @@ import { SelectModbusComponent } from '@app/select-modbus/select-modbus.componen
 import { SelectSlaveComponent } from '@app/select-slave/select-slave.component'
 import { RootRoutingComponent } from '@app/root-routing/root-routing.component'
 import { SpecificationsComponent } from '@app/specifications/specifications.component'
+import { NetworkInterfacesComponent } from '@app/network-interfaces/network-interfaces.component'
+import { NetworkScanComponent } from '@app/network-scan/network-scan.component'
 import { RoutingNames } from '@shared/server'
 export const APP_ROUTES: Routes = [
   { path: '', component: RootRoutingComponent, pathMatch: 'full' },
@@ -33,5 +35,15 @@ export const APP_ROUTES: Routes = [
     canActivate: [AuthGuardService],
     loadComponent: () => import('@app/specification/specification/specification.component').then((m) => m.SpecificationComponent),
     canDeactivate: [(component: SpecificationComponent) => !component.canDeactivate()],
+  },
+  {
+    path: RoutingNames.networkInterfaces,
+    component: NetworkInterfacesComponent,
+    canActivate: [AuthGuardService],
+  },
+  {
+    path: RoutingNames.networkScan,
+    component: NetworkScanComponent,
+    canActivate: [AuthGuardService],
   },
 ]

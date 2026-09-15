@@ -82,6 +82,7 @@ export class SelectModbusComponent implements AfterViewInit, OnDestroy {
   busname: string | undefined = undefined
   paramSubscription: Subscription | undefined = undefined
   serialDevices: string[] = []
+  networkInterfaces: string[] = []
   bussesFormArray: FormArray
   configureModbusFormGroup: FormGroup
   modbusIsRtu: boolean[] = []
@@ -115,6 +116,9 @@ export class SelectModbusComponent implements AfterViewInit, OnDestroy {
     this.entityApiService.getSerialDevices().subscribe((devices) => {
       this.serialDevices = devices
       this.readBussesFromServer()
+    })
+    this.entityApiService.getNetworkInterfaces().subscribe((interfaces) => {
+      this.networkInterfaces = interfaces.map((i: any) => i.name)
     })
     this.paramSubscription = this.route.queryParams.subscribe((params) => {
       if (params['busid'] != undefined) {
@@ -186,6 +190,8 @@ export class SelectModbusComponent implements AfterViewInit, OnDestroy {
         if (br) br.setValue(port)
         const to = fg.get(['tcp', 'timeout'])
         if (to) to.setValue(timeout)
+        const ni = fg.get(['tcp', 'networkInterface'])
+        if (ni) ni.setValue((bus.connectionData as ITCPConnection).networkInterface ?? '')
       }
     }
   }
@@ -272,6 +278,10 @@ export class SelectModbusComponent implements AfterViewInit, OnDestroy {
           ;(connectionData as ITCPConnection).port = port.value
           ;(connectionData as ITCPConnection).timeout = timeout.value
         }
+        const ni = fg.get(['tcp', 'networkInterface']) as FormControl
+        if (ni && ni.value) {
+          ;(connectionData as ITCPConnection).networkInterface = ni.value
+        }
         delete (connectionData as any).serialport
         delete (connectionData as any).baudrate
       }
@@ -329,6 +339,7 @@ export class SelectModbusComponent implements AfterViewInit, OnDestroy {
         host: ['', Validators.required],
         port: [502, Validators.required],
         timeout: [BUS_TIMEOUT_DEFAULT, Validators.required],
+        networkInterface: [''],
       }),
     })
     return fg

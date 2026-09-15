@@ -1,0 +1,83 @@
+<h1>Network Interfaces</h1>
+<p class="subtitle">Select an Ethernet interface to scan for Modbus devices</p>
+
+@if (loading) {
+  <div class="loading-container">
+    <mat-spinner diameter="40"></mat-spinner>
+    <span>Loading network interfaces...</span>
+  </div>
+}
+
+@if (error) {
+  <div class="error-banner">
+    <mat-icon>error</mat-icon>
+    <span>{{ error }}</span>
+    <button mat-button (click)="loadInterfaces()">Retry</button>
+  </div>
+}
+
+@if (!loading && !error) {
+  @if (interfaces.length === 0) {
+    <div class="empty-state">
+      <mat-icon class="empty-icon">lan_disconnect</mat-icon>
+      <h3>No Ethernet Interfaces Found</h3>
+      <p>Ensure the add-on is running with <code>host_network: true</code> and the Supervisor API is accessible.</p>
+      <button mat-button color="primary" (click)="loadInterfaces()">
+        <mat-icon>refresh</mat-icon> Refresh
+      </button>
+    </div>
+  }
+
+  <div class="interface-grid">
+    @for (iface of interfaces; track iface.name) {
+      <mat-card class="interface-card">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon class="iface-icon">settings_ethernet</mat-icon>
+            {{ iface.name }}
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="iface-details">
+            <div class="detail-row">
+              <span class="detail-label">IP Address</span>
+              <span class="detail-value">{{ iface.ipv4Address }}/{{ iface.prefixLength }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">MAC</span>
+              <span class="detail-value mono">{{ iface.mac }}</span>
+            </div>
+            @if (iface.gateway) {
+              <div class="detail-row">
+                <span class="detail-label">Gateway</span>
+                <span class="detail-value">{{ iface.gateway }}</span>
+              </div>
+            }
+            <div class="detail-row">
+              <span class="detail-label">Status</span>
+              <span class="status-chip" [class]="'status-' + getStatusText(iface).toLowerCase()">
+                {{ getStatusText(iface) }}
+              </span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Type</span>
+              <span class="detail-value">{{ iface.type }}</span>
+            </div>
+          </div>
+        </mat-card-content>
+        <mat-card-actions align="end">
+          <button
+            mat-button
+            color="primary"
+            [disabled]="!iface.connected"
+            (click)="scanInterface(iface)"
+            matTooltip="Scan this interface for Modbus devices"
+          >
+            <mat-icon>radar</mat-icon>
+            Scan for Devices
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    }
+  </div>
+}

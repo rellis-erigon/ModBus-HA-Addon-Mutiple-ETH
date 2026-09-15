@@ -1,0 +1,101 @@
+.scan-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.scan-header h1 {
+  margin: 0;
+}
+
+.scan-controls {
+  margin-bottom: 16px;
+}
+
+.controls-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.controls-row mat-form-field {
+  min-width: 280px;
+}
+
+.progress-section {
+  margin-top: 16px;
+}
+
+.progress-details {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+  font-size: 0.85em;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.scan-warning {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 12px 16px;
+  background: #fff8e1;
+  border-radius: 4px;
+  margin-bottom: 24px;
+  font-size: 0.9em;
+}
+
+.scan-warning mat-icon {
+  color: #f57f17;
+  flex-shrink: 0;
+}
+
+.results-table {
+  width: 100%;
+}
+
+.spec-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  background: #e3f2fd;
+  color: #1565c0;
+  border-radius: 4px;
+  font-size: 0.85em;
+}
+
+.no-spec {
+  color: rgba(0, 0, 0, 0.4);
+  font-style: italic;
+}
+
+.added-badge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #2e7d32;
+  font-size: 0.9em;
+}
+
+.added-badge mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+.empty-results {
+  text-align: center;
+  padding: 48px 24px;
+}
+
+.empty-icon {
+  font-size: 64px;
+  width: 64px;
+  height: 64px;
+  color: rgba(0, 0, 0, 0.2);
+}
+
+h2 {
+  margin-bottom: 12px;
+}

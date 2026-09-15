@@ -29,6 +29,17 @@
     <button
       class="header-btn"
       type="button"
+      aria-label="Network Interfaces"
+      routerLink="/network"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      matTooltip="Network Interfaces & Device Scanner"
+    >
+      <mat-icon aria-hidden="true">settings_ethernet</mat-icon>
+    </button>
+    <button
+      class="header-btn"
+      type="button"
       aria-label="Show Busses"
       routerLink="/busses"
       routerLinkActive="active"

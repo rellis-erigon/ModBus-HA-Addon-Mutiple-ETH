@@ -179,6 +179,17 @@
                       <input type="number" matInput formControlName="timeout" />
                     </mat-form-field>
                   </div>
+                  <div>
+                    <mat-form-field>
+                      <mat-label>Network Interface</mat-label>
+                      <mat-select matInput formControlName="networkInterface">
+                        <mat-option value="">Auto (default routing)</mat-option>
+                        @for (iface of networkInterfaces; track $index) {
+                          <mat-option [value]="iface">{{ iface }}</mat-option>
+                        }
+                      </mat-select>
+                    </mat-form-field>
+                  </div>
                 </div>
               </mat-tab>
             </mat-tab-group>

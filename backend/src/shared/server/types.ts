@@ -22,6 +22,8 @@ export enum RoutingNames {
   specifications = 'specifications',
   slaves = 'slaves',
   specification = 'specification',
+  networkInterfaces = 'network',
+  networkScan = 'scan',
 }
 export enum PollModes {
   intervall = 0,

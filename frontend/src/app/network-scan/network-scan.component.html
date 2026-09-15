@@ -1,0 +1,103 @@
+<div class="scan-header">
+  <button mat-icon-button (click)="backToInterfaces()" matTooltip="Back to interfaces">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <h1>Network Scan — {{ interfaceName }}</h1>
+</div>
+
+<mat-card class="scan-controls">
+  <mat-card-content>
+    <div class="controls-row">
+      <mat-form-field>
+        <mat-label>Scan Mode</mat-label>
+        <mat-select [(value)]="scanMode" [disabled]="scanning">
+          <mat-option value="quick">Quick (common unit IDs)</mat-option>
+          <mat-option value="standard">Standard (all unit IDs 1-247)</mat-option>
+          <mat-option value="targeted">Targeted (specific host)</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <button mat-raised-button color="primary" (click)="startScan()" [disabled]="scanning || !interfaceName">
+        <mat-icon>{{ scanning ? 'stop' : 'radar' }}</mat-icon>
+        {{ scanning ? 'Scanning...' : 'Start Scan' }}
+      </button>
+    </div>
+
+    @if (scanning) {
+      <div class="progress-section">
+        <mat-progress-bar mode="determinate" [value]="status.progress"></mat-progress-bar>
+        <div class="progress-details">
+          <span>{{ status.hostsScanned }} / {{ status.hostsTotal }} hosts scanned</span>
+          <span>{{ status.devicesFound }} devices found</span>
+          <span>{{ status.progress }}%</span>
+        </div>
+      </div>
+    }
+  </mat-card-content>
+</mat-card>
+
+<div class="scan-warning">
+  <mat-icon>warning</mat-icon>
+  <span>Scanning sends read-only Modbus requests (FC 0x03). It will not write to or modify any device. Use with caution on production networks.</span>
+</div>
+
+@if (results.length > 0) {
+  <h2>Discovered Devices ({{ results.length }})</h2>
+  <table mat-table [dataSource]="results" class="results-table">
+    <ng-container matColumnDef="host">
+      <th mat-header-cell *matHeaderCellDef>Host</th>
+      <td mat-cell *matCellDef="let device">{{ device.host }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="port">
+      <th mat-header-cell *matHeaderCellDef>Port</th>
+      <td mat-cell *matCellDef="let device">{{ device.port }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="unitId">
+      <th mat-header-cell *matHeaderCellDef>Unit ID</th>
+      <td mat-cell *matCellDef="let device">{{ device.unitId }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="identification">
+      <th mat-header-cell *matHeaderCellDef>Device</th>
+      <td mat-cell *matCellDef="let device">{{ getDeviceName(device) }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="spec">
+      <th mat-header-cell *matHeaderCellDef>Specification</th>
+      <td mat-cell *matCellDef="let device">
+        @if (device.matchedSpec) {
+          <span class="spec-badge">{{ device.matchedSpec }}</span>
+        } @else {
+          <span class="no-spec">No match</span>
+        }
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>Actions</th>
+      <td mat-cell *matCellDef="let device">
+        @if (!device.added) {
+          <button mat-button color="primary" (click)="addDevice(device)" matTooltip="Add as Modbus bus">
+            <mat-icon>add_circle</mat-icon> Add
+          </button>
+        } @else {
+          <span class="added-badge">
+            <mat-icon>check_circle</mat-icon> Added
+          </span>
+        }
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  </table>
+}
+
+@if (!scanning && results.length === 0) {
+  <div class="empty-results">
+    <mat-icon class="empty-icon">device_hub</mat-icon>
+    <h3>No Devices Found</h3>
+    <p>Start a scan to discover Modbus devices on this interface. Try "Standard" mode for a more thorough scan.</p>
+  </div>
+}

@@ -29,6 +29,19 @@ export function registerBusRoutes(r: Registrar): void {
 
   r.post(apiUri.bus, async (ctx) => {
     debug('POST: ' + ctx.url)
+    // Resolve localAddress from networkInterface
+    const connBody = ctx.body as Record<string, any>
+    if (connBody.host && connBody.networkInterface && !connBody.localAddress) {
+      try {
+        const { NetworkManager } = await import('../../networkManager.js')
+        const addr = NetworkManager.getInstance().getLocalAddressForInterface(connBody.networkInterface)
+        if (addr) {
+          connBody.localAddress = addr
+        }
+      } catch {
+        // NetworkManager not available, skip
+      }
+    }
     if (ctx.query['busid'] != undefined) {
       const bus = Bus.getBus(parseInt(ctx.query['busid']))
       if (!bus) throw new ApiError(HttpErrorsEnum.ErrBadRequest, 'invalid Parameter')

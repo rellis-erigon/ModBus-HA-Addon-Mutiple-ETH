@@ -412,6 +412,32 @@ export class ApiService {
       })
     )
   }
+  getNetworkInterfaces(): Observable<any[]> {
+    return this.httpClient.get<any[]>(this.getFullUri(apiUri.networkInterfaces)).pipe(
+      catchError((err) => {
+        this.errorHandler(err)
+        return of([])
+      })
+    )
+  }
+
+  startNetworkScan(interfaceName: string, mode: string = 'quick'): Observable<any> {
+    return this.httpClient.post<any>(this.getFullUri(apiUri.networkScan), { interfaceName, mode }).pipe(
+      catchError((err) => {
+        this.errorHandler(err)
+        return of({ results: [] })
+      })
+    )
+  }
+
+  getNetworkScanStatus(): Observable<any> {
+    return this.httpClient.get<any>(this.getFullUri(apiUri.networkScanStatus)).pipe(
+      catchError((err) => {
+        this.errorHandler(err)
+        return of({ scanning: false, results: [] })
+      })
+    )
+  }
   // Runs one poll cycle for the slave now, regardless of its poll mode and interval. Returns the
   // slave with the refreshed modbusStatusForSlave. The caller passes an errorHandler to report a
   // failing poll (timeout, modbus error) instead of silently swallowing it.
