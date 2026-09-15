@@ -40,9 +40,41 @@
   <span>Scanning sends read-only Modbus requests (FC 0x03). It will not write to or modify any device. Use with caution on production networks.</span>
 </div>
 
+@if (batchResult) {
+  <div class="batch-result">
+    <mat-icon>info</mat-icon>
+    <span>Batch add complete: {{ batchResult.added }} added, {{ batchResult.failed }} failed.</span>
+  </div>
+}
+
 @if (results.length > 0) {
-  <h2>Discovered Devices ({{ results.length }})</h2>
+  <div class="batch-actions-row">
+    <h2>Discovered Devices ({{ results.length }})</h2>
+    @if (selectedDevices.size > 0) {
+      <button mat-raised-button color="accent" (click)="batchAddSelected()" [disabled]="batchInProgress">
+        <mat-icon>playlist_add</mat-icon>
+        Batch Add Selected ({{ selectedDevices.size }})
+      </button>
+    }
+  </div>
   <table mat-table [dataSource]="results" class="results-table">
+    <ng-container matColumnDef="select">
+      <th mat-header-cell *matHeaderCellDef>
+        <mat-checkbox
+          [checked]="isAllSelected()"
+          [indeterminate]="isSomeSelected()"
+          (change)="toggleSelectAll()"
+        ></mat-checkbox>
+      </th>
+      <td mat-cell *matCellDef="let device; let i = index">
+        <mat-checkbox
+          [checked]="selectedDevices.has(i)"
+          (change)="toggleSelect(i)"
+          [disabled]="device.added"
+        ></mat-checkbox>
+      </td>
+    </ng-container>
+
     <ng-container matColumnDef="host">
       <th mat-header-cell *matHeaderCellDef>Host</th>
       <td mat-cell *matCellDef="let device">{{ device.host }}</td>

@@ -127,6 +127,7 @@ Subnets larger than /16 (65,534 hosts) are refused to prevent accidental network
 | Guide | Description |
 |---|---|
 | [Getting Started](docs/getting-started.md) | First steps: MQTT config, adding a bus, assigning specs |
+| [Multi-Ethernet Guide](docs/multi-ethernet.md) | Interface binding, auto-discovery, health monitoring, troubleshooting |
 | [Home Assistant Install](docs/installation-homeassistant.md) | Add-on installation and configuration |
 | [Docker Install](docs/installation-docker.md) | Docker deployment guide |
 | [Proxmox LXC](docs/installation-proxmox.md) | Proxmox container setup |
@@ -141,6 +142,9 @@ Subnets larger than /16 (65,534 hosts) are refused to prevent accidental network
 | `GET` | `/api/network/interfaces` | List all host network interfaces |
 | `POST` | `/api/network/scan` | Start a device scan on an interface |
 | `GET` | `/api/network/scan/status` | Poll scan progress and results |
+| `GET` | `/api/network/health` | Current health status of all interfaces |
+| `GET` | `/api/network/health/history?interface=X` | Health check history for an interface |
+| `POST` | `/api/network/batch-add` | Batch add discovered devices as buses |
 
 ## Tech Stack
 

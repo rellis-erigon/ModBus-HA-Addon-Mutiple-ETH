@@ -1,0 +1,132 @@
+<div class="dashboard-header">
+  <h1>Network Dashboard</h1>
+</div>
+
+<div class="summary-row">
+  <mat-card class="summary-card">
+    <mat-card-content>
+      <div class="summary-value">{{ totalCount }}</div>
+      <div class="summary-label">Total Interfaces</div>
+    </mat-card-content>
+  </mat-card>
+  <mat-card class="summary-card summary-healthy">
+    <mat-card-content>
+      <div class="summary-value" style="color: #4caf50">{{ healthyCount }}</div>
+      <div class="summary-label">Healthy</div>
+    </mat-card-content>
+  </mat-card>
+  <mat-card class="summary-card summary-degraded">
+    <mat-card-content>
+      <div class="summary-value" style="color: #ff9800">{{ degradedCount }}</div>
+      <div class="summary-label">Degraded</div>
+    </mat-card-content>
+  </mat-card>
+  <mat-card class="summary-card summary-down">
+    <mat-card-content>
+      <div class="summary-value" style="color: #f44336">{{ downCount }}</div>
+      <div class="summary-label">Down</div>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+@if (loading) {
+  <div class="loading-state">
+    <mat-icon>hourglass_empty</mat-icon>
+    <p>Loading network health data...</p>
+  </div>
+}
+
+@if (!loading && interfaces.length === 0) {
+  <div class="empty-state">
+    <mat-icon class="empty-icon">settings_ethernet</mat-icon>
+    <h3>No Network Interfaces</h3>
+    <p>No interfaces with health data available.</p>
+  </div>
+}
+
+@if (!loading && interfaces.length > 0) {
+  <div class="interface-grid">
+    @for (iface of interfaces; track iface.name) {
+      <mat-card class="interface-card">
+        <mat-card-header>
+          <mat-card-title class="interface-title">
+            <mat-icon>settings_ethernet</mat-icon>
+            <span>{{ iface.name }}</span>
+            <span class="status-chip" [style.background-color]="getStatusColor(iface.status)">
+              {{ iface.status }}
+            </span>
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="interface-details">
+            <div class="detail-row">
+              <span class="detail-label">IP</span>
+              <span class="detail-value">{{ iface.ip || 'N/A' }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">MAC</span>
+              <span class="detail-value mac-value">{{ iface.mac || 'N/A' }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Latency</span>
+              <span class="detail-value latency-value">{{ iface.latencyMs }}ms</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Devices</span>
+              <span class="detail-value">{{ iface.deviceCount }}</span>
+            </div>
+          </div>
+
+          <div class="uptime-section">
+            <div class="uptime-header">
+              <span class="detail-label">Uptime</span>
+              <span class="uptime-percent">{{ iface.uptimePercent }}%</span>
+            </div>
+            <div class="uptime-bar-track">
+              <div
+                class="uptime-bar-fill"
+                [style.width.%]="iface.uptimePercent"
+                [style.background-color]="getStatusColor(iface.status)"
+              ></div>
+            </div>
+          </div>
+
+          <div class="interface-actions">
+            <button mat-button (click)="goToScan(iface.name)" matTooltip="Scan this interface">
+              <mat-icon>radar</mat-icon> Scan
+            </button>
+            <button mat-button (click)="toggleHistory(iface.name)" matTooltip="View health history">
+              <mat-icon>{{ isHistoryExpanded(iface.name) ? 'expand_less' : 'bar_chart' }}</mat-icon>
+              {{ isHistoryExpanded(iface.name) ? 'Hide History' : 'View History' }}
+            </button>
+          </div>
+
+          @if (isHistoryExpanded(iface.name)) {
+            <div class="history-section">
+              <h4>Health History</h4>
+              @if (expandedHistory[iface.name].length === 0) {
+                <p class="no-history">No history data available.</p>
+              } @else {
+                <div class="history-chart">
+                  @for (entry of expandedHistory[iface.name]; track entry.timestamp) {
+                    <div class="history-bar-wrapper" [matTooltip]="formatTime(entry.timestamp) + ' - ' + entry.latencyMs + 'ms (' + entry.status + ')'">
+                      <div
+                        class="history-bar"
+                        [style.height.%]="getHistoryBarHeight(entry, expandedHistory[iface.name])"
+                        [style.background-color]="getHistoryBarColor(entry)"
+                      ></div>
+                    </div>
+                  }
+                </div>
+                <div class="history-labels">
+                  <span>{{ formatTime(expandedHistory[iface.name][0].timestamp) }}</span>
+                  <span>{{ formatTime(expandedHistory[iface.name][expandedHistory[iface.name].length - 1].timestamp) }}</span>
+                </div>
+              }
+            </div>
+          }
+        </mat-card-content>
+      </mat-card>
+    }
+  </div>
+}

@@ -12,6 +12,7 @@ import { MatSelectModule } from '@angular/material/select'
 import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatTableModule } from '@angular/material/table'
 import { MatChipsModule } from '@angular/material/chips'
+import { MatCheckboxModule } from '@angular/material/checkbox'
 import { Subscription, interval } from 'rxjs'
 import { switchMap, takeWhile } from 'rxjs/operators'
 
@@ -61,6 +62,7 @@ interface ScanStatus {
     MatFormFieldModule,
     MatTableModule,
     MatChipsModule,
+    MatCheckboxModule,
   ],
 })
 export class NetworkScanComponent implements OnInit, OnDestroy {
@@ -76,7 +78,10 @@ export class NetworkScanComponent implements OnInit, OnDestroy {
     results: [],
   }
   results: DiscoveredDevice[] = []
-  displayedColumns = ['host', 'port', 'unitId', 'identification', 'spec', 'actions']
+  displayedColumns = ['select', 'host', 'port', 'unitId', 'identification', 'spec', 'actions']
+  selectedDevices = new Set<number>()
+  batchResult: { added: number; failed: number } | null = null
+  batchInProgress = false
   private pollSub: Subscription | null = null
 
   constructor(
@@ -178,6 +183,49 @@ export class NetworkScanComponent implements OnInit, OnDestroy {
       return `${device.deviceIdentification.vendorName} ${device.deviceIdentification.productCode || ''}`
     }
     return 'Unknown'
+  }
+
+  toggleSelectAll(): void {
+    if (this.selectedDevices.size === this.results.length) {
+      this.selectedDevices.clear()
+    } else {
+      this.results.forEach((_, i) => this.selectedDevices.add(i))
+    }
+  }
+
+  toggleSelect(index: number): void {
+    if (this.selectedDevices.has(index)) {
+      this.selectedDevices.delete(index)
+    } else {
+      this.selectedDevices.add(index)
+    }
+  }
+
+  isAllSelected(): boolean {
+    return this.results.length > 0 && this.selectedDevices.size === this.results.length
+  }
+
+  isSomeSelected(): boolean {
+    return this.selectedDevices.size > 0 && this.selectedDevices.size < this.results.length
+  }
+
+  batchAddSelected(): void {
+    const devices = Array.from(this.selectedDevices).map((i) => this.results[i])
+    if (devices.length === 0) return
+    this.batchInProgress = true
+    this.batchResult = null
+    this.apiService.batchAddDevices(devices).subscribe({
+      next: (result) => {
+        this.batchResult = { added: result.added || 0, failed: result.failed || 0 }
+        this.batchInProgress = false
+        devices.forEach((d) => (d.added = true))
+        this.selectedDevices.clear()
+      },
+      error: () => {
+        this.batchResult = { added: 0, failed: devices.length }
+        this.batchInProgress = false
+      },
+    })
   }
 
   backToInterfaces(): void {

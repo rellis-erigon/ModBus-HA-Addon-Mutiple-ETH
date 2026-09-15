@@ -57,7 +57,21 @@ A "bus" represents a physical connection to your Modbus devices.
    - **Host**: IP address of your Modbus TCP device
    - **Port**: `502` (default Modbus TCP port)
    - **Timeout**: `1000` ms
+   - **Network Interface**: Select the NIC connected to this device's network (optional — leave as "Auto" for single-NIC setups)
 4. Click **Save**
+
+#### Auto-Discovery (Multi-Ethernet)
+
+If your host has multiple Ethernet interfaces:
+
+1. Click the **Network Interfaces** button in the header (settings_ethernet icon)
+2. Browse all detected NICs — each shows its IP, MAC, and connection status
+3. Click **Scan for Devices** on the interface connected to your Modbus network
+4. Choose **Quick** (probes common unit IDs) or **Standard** (probes all 1-247)
+5. When devices are found, click **Add** next to each one (or use **Batch Add Selected** for multiple devices)
+6. Each added device is automatically bound to the correct network interface
+
+See the [Multi-Ethernet Guide](./multi-ethernet.md) for detailed documentation.
 
 ### 4. Add a Device (Slave)
 
@@ -203,6 +217,7 @@ Log out and back in for changes to take effect.
 
 ## Next Steps
 
+- [Multi-Ethernet Interface Guide](./multi-ethernet.md)
 - [Advanced Configuration](./configuration.md)
 - [Creating Custom Specifications](./creating-specifications.md)
 - [Contributing Specifications](./contributing.md)

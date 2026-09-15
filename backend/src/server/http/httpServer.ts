@@ -14,6 +14,7 @@ import { registerModbusRoutes } from './routes/modbusRoutes.js'
 import { registerE2eRoutes } from './routes/e2eRoutes.js'
 import { registerNetworkRoutes } from './routes/networkRoutes.js'
 import { NetworkManager } from '../networkManager.js'
+import { InterfaceHealthMonitor } from '../interfaceHealthMonitor.js'
 
 const debug = Debug('httpserver')
 
@@ -55,6 +56,11 @@ export class HttpServer extends HttpServerBase {
     // Initialize network interface manager
     NetworkManager.getInstance().refreshInterfaces().catch((e) => {
       console.error('Failed to initialize NetworkManager:', e)
+    })
+
+    // Start interface health monitor
+    InterfaceHealthMonitor.getInstance().start().catch((e) => {
+      console.error('Failed to start InterfaceHealthMonitor:', e)
     })
   }
 }

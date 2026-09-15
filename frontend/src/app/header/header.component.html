@@ -29,6 +29,17 @@
     <button
       class="header-btn"
       type="button"
+      aria-label="Network Dashboard"
+      routerLink="/dashboard"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      matTooltip="Network Dashboard"
+    >
+      <mat-icon aria-hidden="true">dashboard</mat-icon>
+    </button>
+    <button
+      class="header-btn"
+      type="button"
       aria-label="Network Interfaces"
       routerLink="/network"
       routerLinkActive="active"

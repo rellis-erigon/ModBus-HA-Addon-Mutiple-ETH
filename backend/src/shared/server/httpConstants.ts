@@ -32,4 +32,7 @@ export enum apiUri {
   networkInterfaces = '/api/network/interfaces',
   networkScan = '/api/network/scan',
   networkScanStatus = '/api/network/scan/status',
+  networkBatchAdd = '/api/network/batch-add',
+  networkHealth = '/api/network/health',
+  networkHealthHistory = '/api/network/health/history',
 }

@@ -1,0 +1,227 @@
+.dashboard-header {
+  margin-bottom: 16px;
+}
+
+.dashboard-header h1 {
+  margin: 0;
+}
+
+/* Summary cards row */
+.summary-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.summary-card {
+  flex: 1;
+  min-width: 140px;
+  text-align: center;
+}
+
+.summary-value {
+  font-size: 2em;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.summary-label {
+  font-size: 0.85em;
+  color: rgba(0, 0, 0, 0.6);
+  margin-top: 4px;
+}
+
+/* Interface grid */
+.interface-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.interface-card {
+  overflow: hidden;
+}
+
+.interface-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1em;
+}
+
+.status-chip {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 12px;
+  color: #fff;
+  font-size: 0.75em;
+  font-weight: 500;
+  text-transform: capitalize;
+  margin-left: auto;
+}
+
+/* Interface details */
+.interface-details {
+  margin-top: 8px;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+  font-size: 0.9em;
+}
+
+.detail-label {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.detail-value {
+  font-weight: 500;
+}
+
+.mac-value {
+  font-family: monospace;
+  font-size: 0.85em;
+}
+
+.latency-value {
+  font-family: monospace;
+}
+
+/* Uptime bar */
+.uptime-section {
+  margin-top: 12px;
+}
+
+.uptime-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.uptime-percent {
+  font-size: 0.85em;
+  font-weight: 500;
+}
+
+.uptime-bar-track {
+  height: 6px;
+  background: rgba(0, 0, 0, 0.08);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.uptime-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+/* Action buttons */
+.interface-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+/* History section */
+.history-section {
+  margin-top: 12px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.history-section h4 {
+  margin: 0 0 8px;
+  font-size: 0.85em;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.no-history {
+  font-size: 0.85em;
+  color: rgba(0, 0, 0, 0.4);
+  font-style: italic;
+}
+
+.history-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 80px;
+  padding: 4px 0;
+}
+
+.history-bar-wrapper {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  cursor: pointer;
+}
+
+.history-bar {
+  width: 100%;
+  min-height: 3px;
+  border-radius: 2px 2px 0 0;
+  transition: height 0.2s ease;
+}
+
+.history-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75em;
+  color: rgba(0, 0, 0, 0.4);
+  margin-top: 4px;
+}
+
+/* Empty / loading states */
+.loading-state,
+.empty-state {
+  text-align: center;
+  padding: 48px 24px;
+}
+
+.empty-icon {
+  font-size: 64px;
+  width: 64px;
+  height: 64px;
+  color: rgba(0, 0, 0, 0.2);
+}
+
+/* Dark theme support */
+@media (prefers-color-scheme: dark) {
+  .summary-label,
+  .detail-label,
+  .history-section h4 {
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  .uptime-bar-track {
+    background: rgba(255, 255, 255, 0.12);
+  }
+
+  .interface-actions {
+    border-top-color: rgba(255, 255, 255, 0.12);
+  }
+
+  .history-section {
+    border-top-color: rgba(255, 255, 255, 0.12);
+  }
+
+  .no-history {
+    color: rgba(255, 255, 255, 0.4);
+  }
+
+  .history-labels {
+    color: rgba(255, 255, 255, 0.4);
+  }
+
+  .empty-icon {
+    color: rgba(255, 255, 255, 0.2);
+  }
+}
